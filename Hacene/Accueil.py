@@ -7,7 +7,7 @@ st.image('Hacene/image.jpg')
 
 link_html = """
 <div style="text-align: center;">
-    <a href="prediction" target="_self" style="font-size:20px; text-decoration: none; color: #0073e6;">Débutez la simulation</a>
+    <a href="prediction_client" target="_self" style="font-size:20px; text-decoration: none; color: #0073e6;">Débutez la simulation</a>
 </div>
 """
 
