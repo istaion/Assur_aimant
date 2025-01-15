@@ -5,6 +5,9 @@ class BmiTransformer(BaseEstimator, TransformerMixin):
         self.columns = columns 
         self.k = k
     
+    def get_feature_names_out(self, feature_names_out):
+        return feature_names_out
+
     def fit(self, X, y=None):
         return self
     
@@ -24,6 +27,9 @@ class AgeTransformer(BaseEstimator, TransformerMixin):
         self.columns = columns 
         self.k = k
     
+    def get_feature_names_out(self, feature_names_out):
+        return feature_names_out
+
     def fit(self, X, y=None):
         # Pas de calcul particulier nécessaire pour cette transformation
         return self
