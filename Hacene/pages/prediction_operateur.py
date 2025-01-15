@@ -4,6 +4,7 @@ from donnees import df_2
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from model import AgeTransformer, BmiTransformer
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, Lasso, Ridge, ElasticNet
@@ -23,8 +24,10 @@ st.title("Prédiction de la redevance du client")
 if 'showform' not in st.session_state:
     st.session_state['showform'] = 1
     st.session_state.test_personne = 0
+    st.session_state.test_personne_2 = 0
     st.session_state.nom_colonnes = 0
     st.session_state.liste_pred = 0
+    st.session_state.imc = 0
 
 if st.session_state.showform :
 
@@ -82,17 +85,17 @@ if st.session_state.showform :
 
 
         if int_poids > 0 and int_taille > 0 and int_poids != '' and int_taille !='' :
-            imc = int_poids / ((int_taille /100) ** 2)
+            st.session_state.imc = int_poids / ((int_taille /100) ** 2)
 
-            if imc <= 18.5:
+            if st.session_state.imc<= 18.5:
                 imc_cat = [1,0,0,0,0]
-            elif imc >18.5 and imc <= 25:
+            elif st.session_state.imc>18.5 and st.session_state.imc<= 25:
                 imc_cat = [0,1,0,0,0]
-            elif imc >25 and imc <= 30:
+            elif st.session_state.imc>25 and st.session_state.imc<= 30:
                 imc_cat = [0,0,1,0,0]
-            elif imc >30 and imc <= 40:
+            elif st.session_state.imc>30 and st.session_state.imc<= 40:
                 imc_cat = [0,0,0,1,0]
-            elif imc > 40:
+            elif st.session_state.imc> 40:
                 imc_cat = [0,0,0,0,1]
 
         nb_enfant = int(st.radio("combien d'enfants",[0,1,2,3,4,5]))
@@ -118,6 +121,7 @@ if st.session_state.showform :
                 cat_fumeur = 0
             else:
                 cat_fumeur = 1
+        
 
 
         #categorie region
@@ -142,6 +146,21 @@ if st.session_state.showform :
 
         st.session_state.nom_colonnes = df_2.drop(['charges', 'bmi'],axis = 1).columns
 
+        # format du df pour le meilleur modele Lasso afin d'intégrer la pipeline
+
+        if sexe == 'homme':
+            sexe = 'male'
+        else:
+            sexe = 'female'
+
+        if fumeur == 'oui':
+            fumeur = 'yes'
+        else:
+            fumeur = 'no'
+
+
+        st.session_state.test_personne_2 = [age,sexe,st.session_state.imc,nb_enfant,fumeur,region]
+
 
 
         if st.form_submit_button(' évaluez votre redevance') :
@@ -153,6 +172,7 @@ else:
     with st.container():
         st.subheader("PROPOSEZ UN PRIX AUX CLIENTS LE PLUS ELEVE POSSIBLE")
 
+# OUVERTURE DES MODELES AU FORMAT PKL
 
     with open('Hacene/modele de regresion lineaire.pkl', 'rb') as f:
         line_reg= pickle.load(f)
@@ -166,11 +186,16 @@ else:
     with open('Hacene/modele de regression ElasticNet.pkl', 'rb') as f:
         model_en = pickle.load(f)
 
+    with open('Hacene/best_lasso_model.pkl', 'rb') as f:
+        model_best = pickle.load(f)
 
 
     if len(st.session_state.test_personne)>= 12:
 
+        # affiche des predicitons par modele
+
         df_test = pd.DataFrame([st.session_state.test_personne], columns=st.session_state.nom_colonnes)
+        df_test2 = pd.DataFrame([st.session_state.test_personne_2], columns=['age','sex','bmi','children','smoker','region'])
         st.write(f'model regression lineaire    {line_reg.predict(df_test)[0]:.2f}')
                 
         st.write(f'model de Lasso               {model_l.predict(df_test)[0]:.2f}')
@@ -178,8 +203,8 @@ else:
         st.write(f'model de Ridge               {model_r.predict(df_test)[0]:.2f}')
         
         st.write(f'model ElasticNet             {model_en.predict(df_test)[0]:.2f}')
-
-        st.session_state.liste_pred = [line_reg.predict(df_test)[0],model_l.predict(df_test)[0],model_r.predict(df_test)[0],model_en.predict(df_test)[0]]
+        st.write(f'model best lasso             {model_best.predict(df_test2)[0]:.2f}')
+        st.session_state.liste_pred = [line_reg.predict(df_test)[0],model_l.predict(df_test)[0],model_r.predict(df_test)[0],model_en.predict(df_test)[0], model_best.predict(df_test2)]
         st.session_state.liste_pred.sort(reverse=True)
 
         st.subheader(f'proposez un prix au client entre {float(st.session_state.liste_pred[0]):.2f} et {float(st.session_state.liste_pred[2]):.2f}')

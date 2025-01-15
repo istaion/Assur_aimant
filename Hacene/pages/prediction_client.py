@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.datasets import fetch_california_housing
+from model import AgeTransformer, BmiTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression, Lasso, Ridge, ElasticNet
 from sklearn.metrics import mean_squared_error, root_mean_squared_error
@@ -23,8 +24,10 @@ import matplotlib.pyplot as plt
 if 'showform' not in st.session_state:
     st.session_state['showform'] = 1
     st.session_state.test_personne = 0
+    st.session_state.test_personne_2 = 0
     st.session_state.nom_colonnes = 0
     st.session_state.liste_pred = 0
+    st.session_state.imc = 0
 
 if st.session_state.showform :
 
@@ -82,19 +85,19 @@ if st.session_state.showform :
 
 
         if int_poids > 0 and int_taille > 0 and int_poids != '' and int_taille !='' :
-            imc = int_poids / ((int_taille /100) ** 2)
+            st.session_state.imc = int_poids / ((int_taille /100) ** 2)
 
-            if imc <= 18.5:
+            if st.session_state.imc<= 18.5:
                 imc_cat = [1,0,0,0,0]
-            elif imc >18.5 and imc <= 25:
+            elif st.session_state.imc>18.5 and st.session_state.imc<= 25:
                 imc_cat = [0,1,0,0,0]
-            elif imc >25 and imc <= 30:
+            elif st.session_state.imc>25 and st.session_state.imc<= 30:
                 imc_cat = [0,0,1,0,0]
-            elif imc >30 and imc <= 40:
+            elif st.session_state.imc>30 and st.session_state.imc<= 40:
                 imc_cat = [0,0,0,1,0]
-            elif imc > 40:
+            elif st.session_state.imc> 40:
                 imc_cat = [0,0,0,0,1]
-
+                
         nb_enfant = int(st.radio("combien d'enfants",[0,1,2,3,4,5]))
         sexe = st.radio('êtes-vous un homme ou une femme', ('Homme','Femme'))
         fumeur = st.radio('Fumez-vous?',('oui','non'))
@@ -141,6 +144,18 @@ if st.session_state.showform :
             st.session_state.test_personne.append(element)
 
         st.session_state.nom_colonnes = df_2.drop(['charges', 'bmi'],axis = 1).columns
+        if sexe == 'homme':
+            sexe = 'male'
+        else:
+            sexe = 'female'
+
+        if fumeur == 'oui':
+            fumeur = 'yes'
+        else:
+            fumeur = 'no'
+
+
+        st.session_state.test_personne_2 = [age,sexe,st.session_state.imc,nb_enfant,fumeur,region]
 
 
 
