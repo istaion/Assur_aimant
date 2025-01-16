@@ -14,6 +14,7 @@ L'objectif principal de ce projet est de prédire la prime d'assurance d'un sous
 - Estimer une prime d'assurance en fonction des données historiques.
 - Automatiser le processus d'évaluation, le rendant plus rapide et plus précis.
 - Réduire le recours à l'expérience manuelle des courtiers et des ratios traditionnels.
+- Réaliser un POC avec streamlit
 
 ## Structure du projet
 
@@ -25,26 +26,12 @@ Les données collectées auprès d'**Assur’Aimant** incluent diverses informat
 - **Informations sur le souscripteur** :
   - Âge
   - Sexe
-  - Localisation géographique (État, code postal, ville)
-  - Profession
-  - Historique de sinistres
-  - Type de contrat (ex. : automobile, habitation, santé, etc.)
+  - Localisation géographique 
+  - âge
+  - IMC
+  - nombre d'enfants
   - Montant de la franchise
-  - Type de couverture
 
-- **Informations sur le véhicule (si applicable)** :
-  - Marque, modèle, année de fabrication
-  - Kilométrage
-  - Historique des accidents
-
-- **Informations financières** :
-  - Revenu annuel du souscripteur
-  - Historique des paiements
-  - Historique des primes payées
-
-- **Facteurs externes** :
-  - Données économiques et démographiques locales
-  - Tendances du marché
 
 ### 2. Traitement des Données
 
@@ -52,7 +39,7 @@ Avant de pouvoir entraîner nos modèles d’IA, nous avons dû effectuer plusie
 
 - Nettoyage des données : Gestion des valeurs manquantes, des erreurs de saisie et des incohérences.
 - Normalisation des variables numériques pour faciliter l'entraînement des modèles.
-- Encodage des variables catégorielles (ex. : sexe, type de contrat, etc.).
+- Encodage des variables catégorielles (ex. : sexe, catégorie IMC, etc.).
 - Création de nouvelles variables dérivées des données existantes (par exemple, âge du véhicule).
 
 ### 3. Modélisation et Prédiction
@@ -60,9 +47,8 @@ Avant de pouvoir entraîner nos modèles d’IA, nous avons dû effectuer plusie
 Nous avons testé plusieurs modèles de machine learning pour la prédiction de la prime d’assurance :
 
 - **Régression linéaire** : Pour un premier aperçu rapide des relations entre les variables.
-- **Arbres de décision** et **forêts aléatoires** : Pour capturer des interactions non linéaires et complexes.
-- **XGBoost** et **LightGBM** : Des modèles d'arbres de décision optimisés pour les grandes quantités de données et la vitesse.
-- **Réseaux de neurones** : Pour explorer des relations complexes dans les données avec un grand nombre de variables.
+- **Régression Lasso** : Pour un modèle linéaire plus robuste.
+- **forêts aléatoires** : Pour capturer des interactions non linéaires et complexes.
 
 Les modèles ont été évalués à l’aide de métriques telles que l'erreur absolue moyenne (MAE), la racine de l’erreur quadratique moyenne (RMSE), et le coefficient de détermination (R²).
 
@@ -82,15 +68,14 @@ Le modèle retenu sera déployé dans un environnement de production afin d’es
 - **Bibliothèques** :
   - Pandas, Numpy (pour le traitement des données)
   - Scikit-learn (modélisation et évaluation)
-  - XGBoost, LightGBM (modèles de boosting)
-  - TensorFlow / Keras (pour les réseaux de neurones, si nécessaire)
+
 - **Outils** : Jupyter Notebook, Git, Docker (pour la containerisation et le déploiement)
 
 ## Installation
 
 ### Prérequis
 
-- Python 3.x
+- Python 3
 - Pip (ou conda)
 
 ### Installation des dépendances
@@ -115,9 +100,6 @@ En utilisant cette solution d'IA, nous prévoyons les résultats suivants pour *
 - Amélioration de la précision des primes estimées, avec une réduction significative des erreurs humaines.
 - Automatisation du processus, permettant une gestion plus efficace des souscripteurs.
 
-## Contribuer
-
-Si vous souhaitez contribuer à ce projet, veuillez ouvrir une **pull request** sur notre dépôt GitHub. Toute contribution est la bienvenue !
 
 ## Auteurs
 
